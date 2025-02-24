@@ -7,10 +7,10 @@
 arbiter is a file manager app used in the terminal that *eventually* aims to:
 
 - [x] File navigation
-- [ ] Rename folders/files
+- [x] Rename folders/files
 - [ ] Move folders/files
 - [ ] Delete folders/files
-- [ ] Clean Terminal UI
+- [x] Clean Terminal UI
 - [ ] implement searching to reduce navigation movement
 
 ### why not just use terminal commands? 
