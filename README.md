@@ -1,6 +1,6 @@
 # arbiter
-![funny arbiter image](https://github.com/user-attachments/assets/a579c7f5-be2a-4663-b6fe-ee223b8afa8a)
-[image credit](https://www.reddit.com/r/halo/comments/iuteu7/were_it_so_cheesy/)
+![no logo cus i cant draw](https://github.com/user-attachments/assets/0c171bc6-0884-476c-aa2b-b9a6f3833712)
+
 
 ### what is arbiter?
 
