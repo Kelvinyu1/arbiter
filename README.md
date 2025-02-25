@@ -24,3 +24,17 @@ The order of tasks seen above does not reflect the order in which I will complet
 but most likely I will implement renaming since I think that will be the easiest.
 
 Ascii ui is a pain in the butt, so that will be the last thing I do
+
+
+
+
+https://github.com/user-attachments/assets/2b7474ed-4f68-49c2-84bc-1e52069c11c3
+
+
+
+https://github.com/user-attachments/assets/ff2ba3ae-d111-4865-bef1-6bbf78bbd486
+
+
+
+
+
