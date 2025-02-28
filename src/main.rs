@@ -4,6 +4,8 @@ use std::io::{self, Read, Write};
 use std::mem::zeroed;
 use std::os::unix::io::AsRawFd;
 
+mod utilities;
+
 fn set_raw_mode(enable: bool) {
     unsafe {
         let fd = io::stdin().as_raw_fd();
@@ -85,13 +87,15 @@ fn main() -> io::Result<()> {
     let mut current_path = join_path(&path_stack);
     let mut directory = get_directory_contents(&current_path);
     let mut selected = 0;
+    let mut move_mode = false;
+    let mut item_to_move: Option<String> = None;
 
     set_raw_mode(true);
 
     loop {
         let (term_width, term_height) = get_terminal_size();
         let ui_width = 60; // Slightly wider
-        let ui_height = 18; // Increased height for spacing
+        let ui_height = 40; // Increased height for spacing
         let offset_x = (term_width.saturating_sub(ui_width)) / 2;
         let offset_y = (term_height.saturating_sub(ui_height)) / 2;
 
@@ -175,21 +179,47 @@ fn main() -> io::Result<()> {
                 }
             }
             10 => {
-                let selected_item = &directory[selected];
-                let new_path = format!("{}/{}", current_path, selected_item);
+                if directory.is_empty() {
+                    continue;
+                }
+                if move_mode {
+                    let target_dir = &directory[selected];
+                    if let Some(item) = &item_to_move {
+                        let src = format!("{}/{}", current_path, item);
+                        let dest = format!("{}/{}", current_path, target_dir);
+                        if let Err(e) = utilities::move_file_or_directory(&src, &dest) {
+                            println!("Move failed: {}", e);
+                        } else {
+                            move_mode = false;
+                            item_to_move = None;
+                            directory = get_directory_contents(&current_path);
+                        }
+                    }
+                } else {
+                    let selected_item = &directory[selected];
+                    let new_path = format!("{}/{}", current_path, selected_item);
 
-                if fs::metadata(&new_path).map(|m| m.is_dir()).unwrap_or(false) {
-                    path_stack.push(selected_item.clone());
-                    current_path = join_path(&path_stack);
-                    directory = get_directory_contents(&current_path);
-                    selected = 0;
+                    if fs::metadata(&new_path).map(|m| m.is_dir()).unwrap_or(false) {
+                        path_stack.push(selected_item.clone());
+                        current_path = join_path(&path_stack);
+                        directory = get_directory_contents(&current_path);
+                        selected = 0;
+                    }
                 }
             }
             b'b' => {
-                if !path_stack.is_empty() {
+                if move_mode || !path_stack.is_empty() {
                     path_stack.pop();
-                    current_path = join_path(&path_stack);
-                    directory = get_directory_contents(&current_path);
+                    current_path = if path_stack.is_empty() {
+                        "./".to_string()
+                    } else {
+                        join_path(&path_stack)
+                    };
+                    directory = if move_mode {
+                        utilities::get_directories_only(&current_path, None)
+                    } else {
+                        get_directory_contents(&current_path)
+                    };
                     selected = 0;
                 }
             }
@@ -214,6 +244,12 @@ fn main() -> io::Result<()> {
                     }
                 }
                 set_raw_mode(true);
+            }
+            b'm' => {
+                move_mode = true;
+                let item = directory[selected].clone();
+                item_to_move = Some(item.clone());
+                directory = utilities::get_directories_only(&current_path, Some(&item));
             }
             b'q' => {
                 set_raw_mode(false);
