@@ -1,3 +1,9 @@
+# Current Update:
+- Started to move most of the loop input code into a utilities.rs file
+- Just added moving files and folders (2/28/25)
+- Need to clean up code!!!
+- Add a video showcasing movement
+- too many things to improve
 # arbiter
 ![no logo cus i cant draw](https://github.com/user-attachments/assets/0c171bc6-0884-476c-aa2b-b9a6f3833712)
 
